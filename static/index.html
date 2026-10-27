@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f4ef">
+  <title>PaperDesk — Research with evidence</title>
+  <style>
+    :root { --ink:#1b2530; --muted:#697581; --line:#dfe3e3; --paper:#fff; --canvas:#f5f4ef; --blue:#234f68; --blue-2:#e8f0f2; --orange:#e37b4b; --green:#2f785f; --shadow:0 16px 44px rgba(27,37,48,.07); }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:var(--canvas); font:15px/1.55 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    button, input, textarea { font:inherit; }
+    button { cursor:pointer; }
+    .topbar { height:68px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; padding:0 34px; background:rgba(255,255,255,.72); }
+    .brand { display:flex; align-items:center; gap:11px; font-weight:750; letter-spacing:-.03em; font-size:18px; }
+    .mark { width:32px; height:32px; display:grid; place-items:center; color:#fff; background:var(--blue); border-radius:10px; font-family:Georgia,serif; font-size:18px; }
+    .top-right { display:flex; align-items:center; gap:18px; color:var(--muted); font-size:13px; }
+    .status { display:flex; align-items:center; gap:8px; padding:7px 11px; border:1px solid var(--line); border-radius:30px; background:white; }
+    .dot { width:7px; height:7px; border-radius:50%; background:var(--green); }
+    .shell { max-width:1420px; margin:0 auto; padding:36px 30px 64px; }
+    .intro { display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin:4px 0 27px; }
+    .eyebrow { color:var(--orange); text-transform:uppercase; letter-spacing:.13em; font-size:11px; font-weight:750; }
+    h1 { margin:7px 0 7px; font-family:Georgia,"Times New Roman",serif; font-size:clamp(32px,4vw,47px); font-weight:500; letter-spacing:-.04em; line-height:1.06; }
+    .intro p { margin:0; color:var(--muted); max-width:610px; }
+    .privacy { color:var(--muted); font-size:12px; text-align:right; max-width:230px; }
+    .layout { display:grid; grid-template-columns:280px minmax(0,1fr); gap:22px; align-items:start; }
+    .panel { background:var(--paper); border:1px solid var(--line); border-radius:17px; box-shadow:var(--shadow); }
+    .sidebar { padding:19px; position:sticky; top:16px; }
+    .side-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+    .side-head h2 { font-size:13px; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin:0; }
+    .count { color:var(--blue); background:var(--blue-2); border-radius:20px; min-width:24px; text-align:center; padding:2px 8px; font-size:12px; font-weight:700; }
+    .btn { border:0; border-radius:10px; background:var(--blue); color:white; font-weight:650; padding:10px 13px; transition:transform .15s, background .15s; }
+    .btn:hover { background:#173d54; transform:translateY(-1px); }
+    .btn.secondary { color:var(--blue); background:var(--blue-2); }
+    .btn.secondary:hover { background:#d9e8ec; }
+    .btn.ghost { color:var(--muted); background:transparent; border:1px solid var(--line); }
+    .btn.ghost:hover { color:var(--ink); background:#fafafa; }
+    .btn:disabled { opacity:.55; cursor:wait; transform:none; }
+    .full { width:100%; }
+    .side-actions { display:grid; gap:8px; }
+    .file-label { display:block; text-align:center; }
+    .file-label input { position:absolute; width:1px; height:1px; overflow:hidden; opacity:0; }
+    .local-import { display:none; }
+    .stat-grid { display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid var(--line); border-bottom:1px solid var(--line); margin:17px -19px 12px; padding:12px 11px; }
+    .stat { text-align:center; }
+    .stat strong { display:block; font-size:18px; letter-spacing:-.04em; }
+    .stat span { color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:.08em; }
+    .doc-list { max-height:410px; overflow:auto; display:grid; gap:3px; }
+    .doc { padding:9px 9px; border-radius:9px; min-width:0; }
+    .doc:hover { background:#f7f8f7; }
+    .doc-title { font-size:12px; font-weight:650; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .doc-meta { color:var(--muted); font-size:11px; margin-top:2px; }
+    .empty { border:1px dashed var(--line); border-radius:12px; padding:18px 12px; text-align:center; color:var(--muted); font-size:12px; }
+    .content { min-width:0; }
+    .ask-card { padding:22px; }
+    .ask-title { margin:0 0 3px; font-size:16px; letter-spacing:-.02em; }
+    .ask-desc { color:var(--muted); margin:0 0 14px; font-size:13px; }
+    .ask-row { display:flex; align-items:flex-end; gap:10px; }
+    textarea { flex:1; resize:vertical; min-height:92px; max-height:220px; border:1px solid #d7dcdf; border-radius:12px; padding:13px 14px; outline:none; color:var(--ink); background:#fdfdfc; }
+    textarea:focus { border-color:#8aa5b3; box-shadow:0 0 0 3px rgba(35,79,104,.1); }
+    .ask-row .btn { min-width:128px; height:45px; }
+    .examples { display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin-top:13px; }
+    .examples span { color:var(--muted); font-size:11px; margin-right:3px; }
+    .example { border:1px solid var(--line); background:#fff; border-radius:20px; padding:5px 10px; color:#485662; font-size:11px; }
+    .example:hover { border-color:#9cb0ba; color:var(--blue); }
+    .results { margin-top:18px; }
+    .result-top { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:10px; }
+    .result-top h2 { margin:0; font-size:14px; }
+    .result-badge { font-size:11px; border-radius:20px; padding:5px 9px; background:#f0f1ed; color:var(--muted); }
+    .answer-card { padding:20px 22px; }
+    .answer-label { color:var(--blue); text-transform:uppercase; font-size:10px; letter-spacing:.12em; font-weight:800; }
+    .answer-text { white-space:pre-wrap; font-size:15px; line-height:1.7; margin:9px 0 0; }
+    .notice { margin-top:12px; color:#765b2b; background:#fbf5e7; border:1px solid #eee1bf; border-radius:9px; padding:9px 11px; font-size:12px; }
+    .evidence-head { display:flex; justify-content:space-between; align-items:center; margin:18px 0 9px; }
+    .evidence-head h3 { margin:0; font-size:13px; }
+    .coverage { color:var(--muted); font-size:11px; }
+    .evidence-list { display:grid; gap:9px; }
+    .evidence-card { background:white; border:1px solid var(--line); border-radius:13px; padding:14px 16px; }
+    .evidence-meta { display:flex; justify-content:space-between; gap:10px; align-items:center; color:var(--muted); font-size:11px; }
+    .source-id { color:var(--blue); font-weight:750; }
+    .source-title { font-weight:700; color:var(--ink); font-size:13px; margin-top:4px; }
+    .source-text { color:#45525e; margin:9px 0 0; font-size:13px; line-height:1.65; }
+    .terms { display:flex; gap:5px; flex-wrap:wrap; margin-top:10px; }
+    .term { background:#f2f4f3; color:#64717a; border-radius:20px; padding:2px 7px; font-size:10px; }
+    .welcome { text-align:center; padding:53px 25px; margin-top:18px; }
+    .welcome-icon { width:48px; height:48px; margin:0 auto 14px; border-radius:15px; display:grid; place-items:center; color:var(--blue); background:var(--blue-2); font:24px Georgia,serif; }
+    .welcome h2 { font:500 24px Georgia,serif; margin:0 0 8px; }
+    .welcome p { color:var(--muted); max-width:430px; margin:0 auto; font-size:13px; }
+    .toast { position:fixed; right:22px; bottom:22px; background:#1b2530; color:#fff; padding:11px 15px; border-radius:10px; box-shadow:var(--shadow); font-size:13px; opacity:0; transform:translateY(8px); transition:.2s; pointer-events:none; z-index:10; }
+    .toast.show { opacity:1; transform:translateY(0); }
+    .loading { color:var(--muted); font-size:13px; padding:16px; text-align:center; }
+    footer { color:var(--muted); font-size:11px; text-align:center; margin-top:28px; }
+    @media (max-width:850px) { .shell{padding:26px 16px 44px}.layout{grid-template-columns:1fr}.sidebar{position:static}.doc-list{max-height:200px}.intro{align-items:flex-start;flex-direction:column}.privacy{text-align:left;max-width:none}.topbar{padding:0 17px}.top-right .status span:last-child{display:none} }
+    @media (max-width:540px) { .ask-row{align-items:stretch;flex-direction:column}.ask-row .btn{width:100%}.top-right{gap:8px}.result-top{align-items:flex-start;flex-direction:column}.stat-grid{margin-top:13px} }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="mark">P</span><span>PaperDesk</span></div>
+    <div class="top-right"><span>Research workbench</span><span class="status"><i class="dot"></i><span id="modeStatus">Checking local mode…</span></span></div>
+  </header>
+  <main class="shell">
+    <section class="intro">
+      <div><div class="eyebrow">A calmer way to read research</div><h1>Find the evidence.<br>Keep the source.</h1><p>Ask questions across your papers. PaperDesk retrieves the passages first, then answers with page references you can check.</p></div>
+      <div class="privacy">Your PDFs stay in your local library.<br>Text leaves your machine only if you configure an LLM endpoint.</div>
+    </section>
+    <div class="layout">
+      <aside class="panel sidebar" aria-label="Paper library">
+        <div class="side-head"><h2>Your library</h2><span class="count" id="docCount">0</span></div>
+        <div class="side-actions">
+          <label class="btn full file-label">＋ Add PDF<input id="fileInput" type="file" accept="application/pdf,.pdf" multiple aria-label="Add PDF files"></label>
+          <button class="btn secondary full local-import" id="importLocal">Import 2026 paper set</button>
+        </div>
+        <div id="importStatus" class="doc-meta" role="status"></div>
+        <div class="stat-grid"><div class="stat"><strong id="statDocs">0</strong><span>Papers</span></div><div class="stat"><strong id="statPages">0</strong><span>Pages</span></div><div class="stat"><strong id="statChunks">0</strong><span>Passages</span></div></div>
+        <div class="doc-list" id="docList"><div class="empty">Add a PDF to start your library.</div></div>
+      </aside>
+      <section class="content" aria-label="Ask your research library">
+        <div class="panel ask-card">
+          <h2 class="ask-title">Ask your papers</h2><p class="ask-desc">Use a specific question. PaperDesk finds page-level evidence before it drafts an answer.</p>
+          <div class="ask-row"><textarea id="question" placeholder="What methods reduce unsupported claims in RAG, and what trade-offs do they introduce?" aria-label="Question about your papers"></textarea><button class="btn" id="askButton">Find evidence <span aria-hidden="true">→</span></button></div>
+          <div class="examples"><span>Try:</span><button class="example">What do the papers say about RAG abstention?</button><button class="example">How do small models fit into agent workflows?</button><button class="example">What breaks when coding agents compress context?</button></div>
+        </div>
+        <div id="welcome" class="panel welcome"><div class="welcome-icon">§</div><h2>Your answers should come with receipts.</h2><p>Import the local 2026 paper set or add your own PDFs. Search and retrieval run locally, and every evidence card keeps its paper title and page.</p></div>
+        <section id="results" class="results" hidden>
+          <div class="result-top"><h2>Research answer</h2><span class="result-badge" id="resultMode">Evidence search</span></div>
+          <div class="panel answer-card"><div class="answer-label">Answer</div><div class="answer-text" id="answerText"></div><div id="notice" class="notice" hidden></div></div>
+          <div class="evidence-head"><h3>Supporting passages</h3><span class="coverage" id="coverage"></span></div>
+          <div id="evidenceList" class="evidence-list"></div>
+        </section>
+      </section>
+    </div>
+    <footer>PaperDesk 0.1 · Evidence-first retrieval · Local by default</footer>
+  </main>
+  <div class="toast" id="toast" role="status"></div>
+<script>
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  let toastTimer;
+  function toast(message) { const el=$('toast'); el.textContent=message; el.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),3200); }
+  async function loadLibrary() {
+    const [healthRes, libraryRes] = await Promise.all([fetch('/api/health'), fetch('/api/library')]);
+    if (!healthRes.ok || !libraryRes.ok) throw new Error('PaperDesk API is unavailable.');
+    const health=await healthRes.json(), lib=await libraryRes.json();
+    $('modeStatus').textContent=health.llm_configured ? 'Local retrieval · LLM connected' : 'Local retrieval only';
+    $('statDocs').textContent=lib.documents; $('statPages').textContent=lib.pages; $('statChunks').textContent=lib.chunks; $('docCount').textContent=lib.documents;
+    $('docList').innerHTML=lib.documents ? lib.documents.map(d=>`<div class="doc" title="${esc(d.filename)}"><div class="doc-title">${esc(d.title)}</div><div class="doc-meta">${d.page_count} pages · ${d.chunk_count} passages</div></div>`).join('') : '<div class="empty">Add a PDF to start your library.</div>';
+    $('importLocal').style.display=health.seed_pdfs ? 'block' : 'none';
+  }
+  async function ingestFile(file) {
+    const data=new FormData(); data.append('file',file);
+    const response=await fetch('/api/ingest',{method:'POST',body:data}); const result=await response.json();
+    if (!response.ok) throw new Error(result.detail || 'Could not add PDF.');
+    return result;
+  }
+  $('fileInput').addEventListener('change', async (event)=>{
+    const files=[...event.target.files]; if(!files.length) return;
+    $('docList').innerHTML='<div class="loading">Adding PDFs…</div>';
+    try { for(const file of files) { const result=await ingestFile(file); toast(result.duplicate ? `${file.name} is already in the library.` : `Added ${file.name} · ${result.chunks} passages.`); }
+      await loadLibrary();
+    } catch(error) { toast(error.message); await loadLibrary().catch(()=>{}); }
+    event.target.value='';
+  });
+  async function importLocalSet() {
+    $('importLocal').disabled=true; $('importStatus').textContent='Starting local import…';
+    try {
+      const start=await fetch('/api/import-local',{method:'POST'}), data=await start.json();
+      if(!start.ok) throw new Error(data.detail || 'Could not import local PDFs.');
+      const id=data.job_id;
+      const timer=setInterval(async()=>{
+        try {
+          const res=await fetch(`/api/import-status/${id}`); const job=await res.json();
+          $('importStatus').textContent=`Importing papers · ${job.completed}/${job.total}`;
+          if(job.status==='complete') { clearInterval(timer); $('importStatus').textContent=job.errors.length ? `Finished with ${job.errors.length} file errors.` : `Imported ${job.results.length} papers.`; $('importLocal').disabled=false; await loadLibrary(); toast('Local paper import complete.'); }
+        } catch { clearInterval(timer); $('importStatus').textContent='Could not read import status.'; $('importLocal').disabled=false; }
+      },1200);
+    } catch(error) { $('importStatus').textContent=error.message; $('importLocal').disabled=false; }
+  }
+  $('importLocal').addEventListener('click', importLocalSet);
+  $('askButton').addEventListener('click', async ()=>{
+    const question=$('question').value.trim(); if(question.length<3){toast('Add a longer question first.');return;}
+    $('askButton').disabled=true; $('askButton').textContent='Searching…'; $('welcome').hidden=true; $('results').hidden=false;
+    $('answerText').textContent='Searching your local library…'; $('evidenceList').innerHTML=''; $('notice').hidden=true;
+    try {
+      const response=await fetch('/api/ask',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question,top_k:5})});
+      const data=await response.json(); if(!response.ok) throw new Error(data.detail || 'Search failed.');
+      $('answerText').textContent=data.answer;
+      $('resultMode').textContent={grounded_answer:'Answer with citations',retrieval_only:'Passages retrieved · model not configured',abstain:'Not enough evidence'}[data.mode] || 'Research answer';
+      $('coverage').textContent=`Query term coverage · ${Math.round(data.evidence_coverage*100)}% · relative ranking scores are not confidence values`;
+      if(data.message){$('notice').textContent=data.message;$('notice').hidden=false;}
+      $('evidenceList').innerHTML=data.evidence.length ? data.evidence.map((e,i)=>`<article class="evidence-card"><div class="evidence-meta"><span class="source-id">[E${i+1}]</span><span>Page ${e.page} · relative rank ${Math.round(e.score*100)}%</span></div><div class="source-title">${esc(e.title)}</div><p class="source-text">${esc(e.text)}</p><div class="terms">${e.matched_terms.map(term=>`<span class="term">${esc(term)}</span>`).join('')}</div></article>`).join('') : '<div class="empty">No matching passages were found.</div>';
+      $('results').scrollIntoView({behavior:'smooth',block:'start'});
+    } catch(error) { $('answerText').textContent=error.message; }
+    finally { $('askButton').disabled=false; $('askButton').innerHTML='Find evidence <span aria-hidden="true">→</span>'; }
+  });
+  document.querySelectorAll('.example').forEach(button=>button.addEventListener('click',()=>{$('question').value=button.textContent;$('question').focus();}));
+  $('question').addEventListener('keydown',event=>{if((event.ctrlKey||event.metaKey)&&event.key==='Enter')$('askButton').click();});
+  loadLibrary().catch(error=>toast(error.message));
+</script>
+</body>
+</html>
