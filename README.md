@@ -23,7 +23,9 @@ Copy-Item .env.example .env
 uvicorn app:app --reload
 ```
 
-Open http://127.0.0.1:8000. Add PDFs through the library panel. In this workspace, choose **Import 2026 paper set** to ingest the PDFs from the sibling `papers` folder. The parsed text is stored in `paperdesk/data/paperdesk.sqlite3` and excluded from Git.
+Open http://127.0.0.1:8000. Add PDFs through the library panel. If the sibling `papers` folder exists, choose **Import 2026 paper set** to ingest those PDFs. The parsed text is stored in `paperdesk/data/paperdesk.sqlite3` and excluded from Git.
+
+The current local checkout already has an ignored SQLite database seeded from the extracted text of all 50 papers. A fresh clone starts without that database or the paper PDFs; upload your PDFs, or set `PAPERDESK_SEED_DIR` to a local folder that contains them.
 
 ## Optional local answer model
 
